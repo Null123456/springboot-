@@ -1,0 +1,54 @@
+package cn.com.taiji;
+
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+import java.util.Map;
+
+@Mapper
+public interface DataMapper {
+
+    //户籍数据
+    @Select("select count(sfzh) from sgaj_hjrk")
+    Integer getHjCount();
+
+    //户籍数据
+    @Select("select sfzh from sgaj_hjrk limit ${start},1000000")
+    List<Map<String, String>> getAllHjInfo(String start);
+
+    //居住证数据
+    @Select("select count(sfzh) from sgaj_jzz")
+    Integer getJzzCount();
+
+    //居住证数据
+    @Select("select sfzh from sgaj_jzz limit ${start},1000000")
+    List<Map<String, String>> getAllJzzInfo(String start);
+
+    //社区数据
+    @Select("select id_card from v_green_person where id_card != 'NULL' and id_card != '' and id_card is not NULL")
+    List<Map<String, String>> getAllSqInfo();
+
+    //社保数据
+    //@Select("select count(sfzh) from 社保表名")
+    //Integer getSBCount();
+
+    //社保数据
+    //@Select("select sfzh from 社保表名 limit ${start},1000000")
+    //List<Map<String, String>> getAllSBInfo(String start);
+
+
+    //国家数据
+    @Select("select sfzh from sgaj_cdc where sfzh != 'NULL' and sfzh != '' and sfzh is not NULL")
+    List<Map<String, String>> getAllGjInfo();
+
+    //疾控中心数据
+    @Select("select sfzh from jkzx_sfzh where sfzh != 'NULL' and sfzh != '' and sfzh is not NULL")
+    List<Map<String, String>> getAllJkzzInfo();
+
+    //社区黄
+    @Select("select id_card from v_yellow_person where id_card != 'NULL' and id_card != '' and id_card is not NULL")
+    List<Map<String, String>> getAllSqYInfo();
+
+}

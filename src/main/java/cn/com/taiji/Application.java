@@ -1,0 +1,123 @@
+package cn.com.taiji;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Pipeline;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@EnableScheduling
+@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class})
+public class Application {
+
+    Logger logger = LoggerFactory.getLogger(Application.class);
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+
+    @Resource
+    private DataMapper dataMapper;
+
+    @Resource
+    private JedisPool jedisPool;
+
+    @Value("${log.table.name}")
+    private String tableNname;//日志表名称
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+
+    @RequestMapping("/init_data")
+    public String initData() {
+        logger.info("开始初始化redis数据");
+        List<Map<String, String>> list0 = dataMapper.getAllGjInfo();
+        List<Map<String, String>> list1 = dataMapper.getAllJkzzInfo();
+        List<Map<String, String>> list2 = dataMapper.getAllSqYInfo();
+
+//        List<Map<String, String>> list5 = dataMapper.getAllSqInfo();
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            Pipeline pipeline = jedis.pipelined();
+            jedis.flushDB();
+            list0.forEach(map -> {
+                String zjhm = map.get("sfzh");
+                pipeline.set("CDC_" + zjhm, "1");
+            });
+            list1.forEach(map -> {
+                String zjhm = map.get("sfzh");
+                pipeline.set("JKZX_" + zjhm, "1");
+            });
+            list2.forEach(map -> {
+                String id_card = map.get("id_card");
+                pipeline.set("SQY_" + id_card, "1");
+            });
+
+//            Integer hjCount = dataMapper.getHjCount();
+//            for (int i = 0; i < hjCount / 1000000; i++) {
+//                String start = String.valueOf(i * 1000000);
+//                List<Map<String, String>> list3 = dataMapper.getAllHjInfo(start);
+//                list3.forEach(map -> {
+//                    String sfzh = map.get("sfzh");
+//                    pipeline.set("HJSS_" + sfzh, "1");
+//                });
+//            }
+//
+//            Integer jzzCount = dataMapper.getJzzCount();
+//            for (int i = 0; i < jzzCount / 1000000; i++) {
+//                String start = String.valueOf(i * 1000000);
+//                List<Map<String, String>> list4 = dataMapper.getAllJzzInfo(start);
+//                list4.forEach(map -> {
+//                    String sfzh = map.get("sfzh");
+//                    pipeline.set("HJSS_" + sfzh, "1");
+//                });
+//            }
+//
+//            list5.forEach(map -> {
+//                String id_card = map.get("id_card");
+//                pipeline.set("HJSS_" + id_card, "1");
+//            });
+//
+//            Integer sbCount = dataMapper.getSBCount();
+//            for (int i = 0; i < sbCount / 1000000; i++) {
+//                String start = String.valueOf(i * 1000000);
+//                List<Map<String, String>> list6 = dataMapper.getAllSBInfo(start);
+//                list6.forEach(map -> {
+//                    String sfzh = map.get("sfzh");
+//                    pipeline.set("HJSS_" + sfzh, "1");
+//                });
+//            }
+
+            pipeline.sync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+        return "success";
+    }
+
+}

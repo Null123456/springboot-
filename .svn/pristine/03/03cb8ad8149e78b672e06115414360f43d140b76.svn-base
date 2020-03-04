@@ -1,0 +1,45 @@
+#指定端口号
+server.port=9998
+#指定context path
+server.servlet.context-path=/xgjcryInitData
+spring.datasource.dynamic.primary=ds01
+#第一个数据库配置ds01
+spring.datasource.dynamic.datasource.ds01.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.dynamic.datasource.ds01.url=jdbc:mysql://39.100.123.89:3306/ds01?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+spring.datasource.dynamic.datasource.ds01.username=root
+spring.datasource.dynamic.datasource.ds01.password=123456
+#第二个数据库配置ds02
+spring.datasource.dynamic.datasource.ds02.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.dynamic.datasource.ds02.url=jdbc:mysql://127.0.0.1:3306/ds02?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+spring.datasource.dynamic.datasource.ds02.username=root
+spring.datasource.dynamic.datasource.ds02.password=123456
+mybatis-plus.global-config.banner=false
+#spring.datasource.url=jdbc:mysql://localhost:3306/health?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+##spring.datasource.username=root
+##spring.datasource.password=123456
+##spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+#redis
+# Redis数据库索引（默认为0）
+spring.redis.database=0
+# Redis服务器地址
+spring.redis.host=127.0.0.1
+# Redis服务器连接端口
+spring.redis.port=6379
+# Redis服务器连接密码（默认为空）
+spring.redis.password=
+# 连接池最大连接数（使用负值表示没有限制）
+spring.redis.jedis.pool.max-active=1024
+# 连接池最大阻塞等待时间（使用负值表示没有限制）
+spring.redis.jedis.pool.max-wait=10000
+# 连接池中的最大空闲连接
+spring.redis.jedis.pool.max-idle=200
+# 连接池中的最小空闲连接
+spring.redis.jedis.pool.min-idle=0
+# 连接超时时间（毫秒）
+spring.redis.timeout=10000
+#flase:超时就报错,true:阻塞到超时
+spring.redis.block-when-exhausted=true
+#日志
+logging.level.cn.com.taiji=INFO
+#日志表名称
+log.table.name=log

@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    #动态数据源配置
+    dynamic:
+      #主数据源
+      primary: ds01
+      datasource:
+        #数据源ds01
+        ds01:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://39.100.123.89:3306/ds01?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+          username: root
+          password: 123456
+        #数据源ds02
+        ds02:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3306/ds02?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+          username: root
+          password: 123456
+        #数据源ds03
+#        ds03:
+#          driver-class-name: com.mysql.cj.jdbc.Driver
+#          url: jdbc:mysql://127.0.0.1:3306/a03?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+#          username: root
+#          password: 123456
